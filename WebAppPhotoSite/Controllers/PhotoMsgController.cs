@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Common.CommonCode;
+using Common.ServiceMessages;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAppPhotoSiteImages.Services;
 
@@ -40,6 +44,32 @@ namespace WebAppPhotoSite.Controllers
         {
             UserProfile res = await _srv.GetUser(name);
             return res;
+        }
+
+        [HttpPost("uploadimg")]
+        public async Task<bool> UploadImage([FromForm] AddImageMsg request)
+        {
+            if(Request != null && Request.Form != null && Request.Form.Files != null)
+            {
+                IFormFile file = Request.Form.Files.FirstOrDefault();
+
+                using (Stream fs = file.OpenReadStream())
+                {
+                    request.Image = fs.ReadFully(file.Length);
+                }
+
+                return await _srv.UploadImage(request);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        [HttpPost("commentimg")]
+        public async Task<bool> CommentImage([FromBody] AddImageCommentMsg request)
+        {
+            return await _srv.AddCommentToImage(request);
         }
 
         //    // POST api/values

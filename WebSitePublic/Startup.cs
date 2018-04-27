@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebSitePublic.Common;
 
 namespace WebSitePublic
 {
@@ -21,6 +22,8 @@ namespace WebSitePublic
         // This method gets called by the runtime. Use this method to add services to the container. //
         public void ConfigureServices(IServiceCollection services)
         {
+            PublicAppSettings.ImgSrvUrl = Configuration["ImgService:url"];
+
             services.AddMvc();
         }
 

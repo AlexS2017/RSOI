@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Common.ServiceMessages.AddImageMsg
+
+@{
     ViewData["Title"] = "Home Page";
 }
 <h2>Your recent images</h2>
@@ -57,22 +59,28 @@
     </a>
 </div>
 
-<div class="row">
-    
-    <div class="col-md-6">
-        <h2>Upload your image</h2>
-        <div><input type="file" id="myuplfile">upload your file</div>
-        <div>Title</div>
-        <input type="text" name="imgtitle" value="" />
-        <div>Description</div>
-        <input type="text" name="imgdescr" value="" />
+<form asp-action="UploadImg" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+
+        <div class="col-md-6">
+            <input asp-for="HashTag" type="hidden"/>
+            <h2>Upload your image</h2>
+            <div>Upload your file</div>
+            <input type="file" id="myuplfile" name="myuplfile" class="form-control" />
+            <div>Title</div>
+            <input asp-for="ImageTitle" name="imgtitle" value="" class="form-control" />
+            <div>Description</div>
+            <input asp-for="Description" name="imgdescr" value="" class="form-control" />
+            <br /><input type="submit" class="btn btn-default" name="imguploadbtn" value="Upload" />
+        </div>
+        <div class="col-md-6">
+            <h2>See and post your comment</h2>
+            <div></div>
+            <div>Write your comment here</div>
+            <input type="text" name="imgcomment" value="" class="form-control" />
+            <br /><input type="button" name="imgcommentsend" value="Send" class="btn btn-default" />
+        </div>
+
     </div>
-    <div class="col-md-6">
-        <h2>See and post your comment</h2>
-        <div></div>  
-        <div>write your comment here</div>
-        <input type="text" name="imgcomment" value="" />
-        <input type="button" name="imgcommentsend" value="Send" />
-    </div>
-   
-</div>
+</form>

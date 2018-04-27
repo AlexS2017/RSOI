@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.ServiceMessages;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebSitePublic.Models;
 
@@ -30,6 +32,18 @@ namespace WebSitePublic.Controllers
             ViewData["Message"] = "Your contact page.";
 
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadImg(AddImageMsg msg, IFormFile myuplfile)
+        {
+            if(ModelState.IsValid && myuplfile != null)
+            {
+                //UploadImage
+            }
+
+            return View(msg);
         }
 
         public IActionResult Error()
