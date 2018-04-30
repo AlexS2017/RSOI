@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Common.CommonCode;
 using Common.ServiceMessages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using WebSitePublic.Common;
 using WebSitePublic.Models;
 
 namespace WebSitePublic.Controllers
@@ -36,11 +42,28 @@ namespace WebSitePublic.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadImg(AddImageMsg msg, IFormFile myuplfile)
+        public async Task<IActionResult> UploadImg(AddImageMsg msg, IFormFile myUplfile)
         {
-            if(ModelState.IsValid && myuplfile != null)
+            if(ModelState.IsValid && myUplfile != null)
             {
                 //UploadImage
+                HttpRequestHelper restCall = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/");
+                string jsonToPost = JsonConvert.SerializeObject(msg);
+                HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
+                byte[] file = null;
+                if (myUplfile.Length > 0)
+                {
+                    using (Stream fs = myUplfile.OpenReadStream())
+                    {
+                        file = fs.ReadFully(myUplfile.Length);
+                    }
+                }
+                bool res = await restCall.CallRequest("uploadimg", content, file);
+
+                if(!res)
+                {
+                    return View("Error");
+                }
             }
 
             return View(msg);

@@ -53,6 +53,8 @@ namespace WebAppPhotoSite.Controllers
             {
                 IFormFile file = Request.Form.Files.FirstOrDefault();
 
+                if (file == null) return false;
+
                 using (Stream fs = file.OpenReadStream())
                 {
                     request.Image = fs.ReadFully(file.Length);
