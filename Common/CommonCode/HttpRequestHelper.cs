@@ -21,7 +21,7 @@ namespace Common.CommonCode
             FullSrvUrl = $"{_serviceUrl}{_apiControllerRelUrl}";
         }
 
-        public async Task<bool> CallRequest(string methodName, HttpContent param, byte[] file = null, bool isPost = true, string getParams = "")
+        public async Task<returnType> CallRequest<returnType>(string methodName, HttpContent param, byte[] file = null, bool isPost = true, string getParams = "") where returnType : new()
         {
             using (HttpClient client = new HttpClient())
             {
@@ -36,9 +36,9 @@ namespace Common.CommonCode
                         {
                             MultipartFormDataContent request = new MultipartFormDataContent();
                             ByteArrayContent content = new ByteArrayContent(file);
-                            content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-                            request.Add(content);
-                            request.Add(param);
+                            //content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+                            request.Add(content,"myimage","image.jpeg");
+                            request.Add(param, "json");
 
                             msg = await client.PostAsync(url, request);
                         }
@@ -59,7 +59,7 @@ namespace Common.CommonCode
                     if (msg != null && msg.Content != null && msg.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         string httpResult = await msg.Content.ReadAsStringAsync();
-                        bool requestVal = JsonConvert.DeserializeObject<bool>(httpResult);
+                        returnType requestVal = JsonConvert.DeserializeObject<returnType>(httpResult);
                         return requestVal;
                     }
                     else

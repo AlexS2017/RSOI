@@ -1,10 +1,10 @@
-﻿@model Common.ServiceMessages.AddImageMsg
+﻿@model Common.ServiceMessages.GetHomeImageMsg
 
 @{
     ViewData["Title"] = "Home Page";
 }
 <h2>Your recent images</h2>
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+@*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
     <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
         <li data-target="#myCarousel" data-slide-to="1"></li>
@@ -57,6 +57,17 @@
         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
     </a>
+</div>*@
+<div class="row">
+
+    @foreach (Guid item in Model.ImageList)
+    {
+        <div class="col-md-3">
+            <img width="230" src="/Home/ViewImage/@item" />
+        </div>
+    }
+    
+    
 </div>
 
 <form asp-action="UploadImg" enctype="multipart/form-data">
@@ -67,11 +78,11 @@
             <input asp-for="HashTag" type="hidden"/>
             <h2>Upload your image</h2>
             <div>Upload your file</div>
-            <input type="file" id="myuplfile" name="myuplfile" class="form-control" />
+            <input required type="file" id="myuplfile" name="myuplfile" class="form-control" />
             <div>Title</div>
-            <input asp-for="ImageTitle" class="form-control" />
+            <input required asp-for="ImageTitle" class="form-control" />
             <div>Description</div>
-            <input asp-for="Description"  class="form-control" />
+            <input required asp-for="Description"  class="form-control" />
             <br /><input type="submit" class="btn btn-default" value="Upload" />
         </div>
         <div class="col-md-6">

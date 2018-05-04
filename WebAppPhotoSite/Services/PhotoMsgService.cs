@@ -18,19 +18,19 @@ namespace WebAppPhotoSiteImages.Services
             _db = dbContext;
         }
 
-        public async Task<List<UserProfile>> GetAllUsers()
+        internal async Task<List<UserProfile>> GetAllUsers()
         {
             List<UserProfile> userList = await _db.UserProfiles.AsNoTracking().ToListAsync();
             return userList;
         }
 
-        public async Task<UserProfile> GetUser(string name)
+        internal async Task<UserProfile> GetUser(string name)
         {
             UserProfile user = await _db.UserProfiles.AsNoTracking().Where(u => u.FirstName == name).FirstOrDefaultAsync();
             return user;
         }
 
-        public async Task<bool> UploadImage(AddImageMsg request)
+        internal async Task<bool> UploadImage(AddImageMsg request)
         {
             ImagePostMsg img = new ImagePostMsg()
             {
@@ -47,7 +47,7 @@ namespace WebAppPhotoSiteImages.Services
             return true;
         }
 
-        public async Task<bool> AddCommentToImage(AddImageCommentMsg request)
+        internal async Task<bool> AddCommentToImage(AddImageCommentMsg request)
         {
             ImageCommentMsg imgcomment = new ImageCommentMsg()
             {
@@ -61,6 +61,31 @@ namespace WebAppPhotoSiteImages.Services
             await _db.SaveChangesAsync();
 
             return true;
+        }
+
+        internal async Task<List<Guid>> GetLastImages()
+        {
+            List<Guid> ids = await _db.ImagePostMsgs.OrderByDescending(i => i.DateCreated).Select(i => i.Id).Take(4).ToListAsync();
+            return ids;
+        }
+
+        internal async Task<GetImageMsg> GetImageById(Guid id)
+        {
+            ImagePostMsg img = await _db.ImagePostMsgs.FirstOrDefaultAsync(i => i.Id == id);
+
+            GetImageMsg res = new GetImageMsg();
+
+            if(img != null)
+            {
+                res.AverageRate = img.AverageRate;
+                res.DateCreated = img.DateCreated;
+                res.Description = img.Description;
+                res.HashTag = img.HashTag;
+                res.Image = img.Image;
+                res.ImageTitle = img.ImageTitle;
+            }
+
+            return res;
         }
     }
 }

@@ -18,9 +18,27 @@ namespace WebSitePublic.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        HttpRequestHelper restCallImg;
+
+        public HomeController()
         {
-            return View();
+            restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/");
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            GetHomeImageMsg model = await GetLastImages();
+
+            return View(model);
+        }
+
+        private async Task<GetHomeImageMsg> GetLastImages()
+        {
+            HttpContent content = new StringContent("", Encoding.UTF8, "application/json");
+            List<Guid> res = await restCallImg.CallRequest<List<Guid>>("getlastimgs", content, null, false, "");
+
+            GetHomeImageMsg model = new GetHomeImageMsg() { ImageList = res };
+            return model;
         }
 
         public IActionResult About()
@@ -42,13 +60,13 @@ namespace WebSitePublic.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadImg(AddImageMsg msg, IFormFile myUplfile)
+        public async Task<IActionResult> UploadImg(GetHomeImageMsg msg, IFormFile myUplfile)
         {
             if(ModelState.IsValid && myUplfile != null)
             {
                 //UploadImage
-                HttpRequestHelper restCall = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/");
-                string jsonToPost = JsonConvert.SerializeObject(msg);
+                AddImageMsg addImgMsg = new AddImageMsg() { Description = msg.Description, HashTag = msg.HashTag, ImageTitle = msg.ImageTitle };
+                string jsonToPost = JsonConvert.SerializeObject(addImgMsg);
                 HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
                 byte[] file = null;
                 if (myUplfile.Length > 0)
@@ -58,15 +76,28 @@ namespace WebSitePublic.Controllers
                         file = fs.ReadFully(myUplfile.Length);
                     }
                 }
-                bool res = await restCall.CallRequest("uploadimg", content, file);
+                bool res = await restCallImg.CallRequest<bool>("uploadimg", content, file);
 
                 if(!res)
                 {
                     return View("Error");
                 }
+
+                msg = await GetLastImages();
             }
 
-            return View(msg);
+            return View("Index", msg);
+            //return View("Index");
+        }
+
+        [HttpGet]
+        public async Task<FileStreamResult> ViewImage(Guid id)
+        {
+            HttpContent content = new StringContent("", Encoding.UTF8, "application/json");
+            GetImageMsg res = await restCallImg.CallRequest<GetImageMsg>("getimg", content,null,false,id.ToString());
+            MemoryStream ms = new MemoryStream(res.Image);
+
+            return new FileStreamResult(ms, "image/jpeg");
         }
 
         public IActionResult Error()

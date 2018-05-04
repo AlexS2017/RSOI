@@ -15,6 +15,26 @@ namespace Common.ServiceMessages
         public byte[] Image { get; set; }
     }
 
+    public class GetImageMsg : AddImageMsg
+    {
+        public DateTime DateCreated { get; set; }
+
+        public decimal AverageRate { get; set; }
+    }
+
+    public class GetHomeImageMsg
+    {
+        public string ImageTitle { get; set; }
+
+        public string Description { get; set; }
+
+        public string HashTag { get; set; }
+
+        public string Message { get; set; }
+
+        public List<Guid> ImageList { get; set; }
+    }
+
     public class AddImageCommentMsg
     {
         public string Comment { get; set; }

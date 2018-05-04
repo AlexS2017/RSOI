@@ -8,6 +8,7 @@ using Common.CommonCode;
 using Common.ServiceMessages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebAppPhotoSiteImages.Services;
 
 namespace WebAppPhotoSite.Controllers
@@ -55,6 +56,8 @@ namespace WebAppPhotoSite.Controllers
 
                 if (file == null) return false;
 
+                request = JsonConvert.DeserializeObject<AddImageMsg>(Request.Form["json"]);
+
                 using (Stream fs = file.OpenReadStream())
                 {
                     request.Image = fs.ReadFully(file.Length);
@@ -72,6 +75,20 @@ namespace WebAppPhotoSite.Controllers
         public async Task<bool> CommentImage([FromBody] AddImageCommentMsg request)
         {
             return await _srv.AddCommentToImage(request);
+        }
+
+        [HttpGet("getlastimgs")]
+        public async Task<List<Guid>> GetLastImages()
+        {
+            List<Guid> res = await _srv.GetLastImages();
+            return res;
+        }
+
+        [HttpGet("getimg/{id}")]
+        public async Task<GetImageMsg> GetImg(Guid id)
+        {
+            GetImageMsg res = await _srv.GetImageById(id);
+            return res;
         }
 
         //    // POST api/values
