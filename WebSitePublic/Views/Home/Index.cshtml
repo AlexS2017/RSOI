@@ -63,7 +63,9 @@
     @foreach (Guid item in Model.ImageList)
     {
         <div class="col-md-3">
-            <img width="230" src="/Home/ViewImage/@item" />
+            <a href="/Home/ImagePage/@item">
+                <img width="230" src="/Home/ViewImage/@item" />
+            </a>
         </div>
     }
     

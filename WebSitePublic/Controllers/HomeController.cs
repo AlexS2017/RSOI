@@ -104,5 +104,33 @@ namespace WebSitePublic.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public async Task<IActionResult> ImagePage(Guid id)
+        {
+            AddImageCommentMsg model = new AddImageCommentMsg() { ImageId = id };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(AddImageCommentMsg addCommentmsg)
+        {
+            if (ModelState.IsValid)
+            {
+                string jsonToPost = JsonConvert.SerializeObject(addCommentmsg);
+                HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
+                
+                bool res = await restCallImg.CallRequest<bool>("commentimg", content);
+
+                if (!res)
+                {
+                    return View("Error");
+                }
+
+               // msg = await GetLastImages();
+            }
+
+            return View("ImagePage", addCommentmsg);
+        }
     }
 }

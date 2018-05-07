@@ -1,0 +1,48 @@
+﻿@model Common.ServiceMessages.AddImageCommentMsg
+
+@{
+    ViewData["Title"] = "ImageView";
+}
+
+<form asp-action="AddComment">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="ImageId"/>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>See and post your comment</h2>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-md-5">
+
+            <img width="450" src="/Home/ViewImage/@Model.ImageId" />
+
+        </div>
+        <div class="col-md-5">
+            <div style="border:1px solid gray;height:250px;">
+                @*<input type="text" class="form-control" />*@
+                <span id="imgcomments" >
+
+                </span>
+            </divstyle="border:1px>
+            <br />
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-5">
+            
+        </div>
+        <div class="col-md-5">
+            <br />
+            <div>Write your comment here</div>
+            <input asp-for="Comment" class="form-control" />
+            <input asp-for="Rate" class="form-control" style="width:100px;" />
+            <br /><input type="submit" value="Add comment" class="btn btn-default" />
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</form>
+
