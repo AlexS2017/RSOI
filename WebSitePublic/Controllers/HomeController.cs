@@ -108,6 +108,7 @@ namespace WebSitePublic.Controllers
         public async Task<IActionResult> ImagePage(Guid id)
         {
             AddImageCommentMsg model = new AddImageCommentMsg() { ImageId = id };
+            model = await GetComments(id);
 
             return View(model);
         }
@@ -130,7 +131,26 @@ namespace WebSitePublic.Controllers
                // msg = await GetLastImages();
             }
 
-            return View("ImagePage", addCommentmsg);
+            //return View("ImagePage", addCommentmsg);
+            return RedirectToAction("ImagePage", new { id = addCommentmsg.ImageId });
+        }
+
+        [HttpGet]
+        public async Task<AddImageCommentMsg> GetComments(Guid id)
+        {
+            AddImageCommentMsg model = new AddImageCommentMsg() { ImageId = id };
+
+            HttpContent content = new StringContent("", Encoding.UTF8, "application/json");
+            List<GetComments> res = await restCallImg.CallRequest<List<GetComments>>("getcomments", content, null, false, id.ToString());
+
+            StringBuilder sb = new StringBuilder();
+            foreach (GetComments item in res)
+            {
+                sb.AppendFormat($"[{item.Date.ToString("dd-MM-yy hh:mm")}]  {item.Comment}\r\n");
+            }
+            model.AllCommentsInfo = sb.ToString();
+
+            return model;
         }
     }
 }

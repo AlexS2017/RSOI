@@ -42,5 +42,16 @@ namespace Common.ServiceMessages
         public int Rate { get; set; }
 
         public Guid ImageId { get; set; }
+
+        public string AllCommentsInfo { get; set; }
+    }
+
+    public class GetComments
+    {
+        public string Comment { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string User { get; set; }
     }
 }

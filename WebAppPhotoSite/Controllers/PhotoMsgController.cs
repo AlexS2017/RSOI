@@ -77,6 +77,13 @@ namespace WebAppPhotoSite.Controllers
             return await _srv.AddCommentToImage(request);
         }
 
+        [HttpGet("getcomments/{id}")]
+        public async Task<List<GetComments>> GetComments(Guid id)
+        {
+            List<GetComments> res = await _srv.GetComments(id);
+            return res;
+        }
+
         [HttpGet("getlastimgs")]
         public async Task<List<Guid>> GetLastImages()
         {
