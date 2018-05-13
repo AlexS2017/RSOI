@@ -66,7 +66,7 @@ namespace WebAppPhotoSiteImages.Services
         internal async Task<List<GetComments>> GetComments(Guid imgId)
         {
             List<GetComments> commentList = await _db.ImageCommentMsgs.Where(c => c.ImagePostMsgId == imgId).
-                OrderBy(c => c.DateCreated).Select(c => new GetComments() { Comment = c.Comment, Date = c.DateCreated, User = "" }).ToListAsync();
+                OrderBy(c => c.DateCreated).Select(c => new GetComments() { Comment = c.Comment, Date = c.DateCreated, User = "", Rate = c.Rate }).ToListAsync();
             return commentList;
         }
 

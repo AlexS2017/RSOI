@@ -53,5 +53,7 @@ namespace Common.ServiceMessages
         public DateTime Date { get; set; }
 
         public string User { get; set; }
+
+        public int Rate { get; set; }
     }
 }
