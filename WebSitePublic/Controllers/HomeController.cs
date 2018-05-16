@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.CommonCode;
 using Common.ServiceMessages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -51,6 +52,7 @@ namespace WebSitePublic.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
