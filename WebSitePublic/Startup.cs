@@ -27,6 +27,8 @@ namespace WebSitePublic
 
             services.AddMvc();
 
+            //services.AddIdentity<>()
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(options =>
@@ -39,7 +41,7 @@ namespace WebSitePublic
             {
                 options.SignInScheme = "Cookies";
 
-                options.Authority = "http://localhost:1000";
+                options.Authority = "http://localhost:5000";
                 options.RequireHttpsMetadata = false;
 
                 options.ClientId = "client_imgapp_mvc";
@@ -49,6 +51,11 @@ namespace WebSitePublic
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
 
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                //options.Scope.Add("email");
+                //options.Scope.Add("roles");
+                //options.Scope.Add("profile");
                 options.Scope.Add("api_img");
                 options.Scope.Add("offline_access");
             });
@@ -70,6 +77,8 @@ namespace WebSitePublic
 
             app.UseAuthentication();
             app.UseStaticFiles();
+
+            //app.UseSession(); //
 
             //app.UseMvc(routes =>
             //{

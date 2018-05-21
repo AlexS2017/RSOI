@@ -34,7 +34,15 @@ namespace WebAppIdentity
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(authConnString));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(o =>
+                {
+                    // configure identity options
+                    o.Password.RequireDigit = false;
+                    o.Password.RequireLowercase = false;
+                    o.Password.RequireUppercase = false;
+                    o.Password.RequiredLength = 5;
+                    o.Password.RequireNonAlphanumeric = false;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -50,6 +58,7 @@ namespace WebAppIdentity
                 .AddInMemoryApiResources(Config.GetApiResources())
                 .AddInMemoryClients(Config.GetClients())
                 .AddAspNetIdentity<ApplicationUser>();
+                //.AddOperationalStore(build => build.UseNpgsql(authConnString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +77,7 @@ namespace WebAppIdentity
 
             app.UseStaticFiles();
 
+            app.UseIdentity();
             app.UseIdentityServer();
 
             app.UseMvc(routes =>

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Common.CommonCode;
@@ -11,6 +12,7 @@ using Common.ServiceMessages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Newtonsoft.Json;
 using WebSitePublic.Common;
 using WebSitePublic.Models;
@@ -57,6 +59,10 @@ namespace WebSitePublic.Controllers
         {
             ViewData["Message"] = "Your contact page.";
 
+            //string bearer = ((FrameRequestHeaders)Request.Headers).HeaderAuthorization[0];
+
+            Claim cl = User.Claims.FirstOrDefault(p => p.Type == "sub");
+            string sub = cl == null ? "" : cl.Value;
             return View();
         }
 
