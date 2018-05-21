@@ -84,10 +84,10 @@ namespace WebAppPhotoSite.Controllers
             return res;
         }
 
-        [HttpGet("getlastimgs")]
-        public async Task<List<Guid>> GetLastImages()
+        [HttpGet("getlastimgs/{userId}")]
+        public async Task<List<Guid>> GetLastImages(Guid userId)
         {
-            List<Guid> res = await _srv.GetLastImages();
+            List<Guid> res = await _srv.GetLastImages(userId);
             return res;
         }
 

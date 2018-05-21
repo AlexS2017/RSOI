@@ -13,6 +13,8 @@ namespace Common.ServiceMessages
         public string HashTag { get; set; }
 
         public byte[] Image { get; set; }
+
+        public Guid UserId { get; set; }
     }
 
     public class GetImageMsg : AddImageMsg
@@ -44,6 +46,8 @@ namespace Common.ServiceMessages
         public Guid ImageId { get; set; }
 
         public string AllCommentsInfo { get; set; }
+
+        public Guid UserId { get; set; }
     }
 
     public class GetComments
@@ -55,5 +59,7 @@ namespace Common.ServiceMessages
         public string User { get; set; }
 
         public int Rate { get; set; }
+
+        public Guid UserId { get; set; }
     }
 }

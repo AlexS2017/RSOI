@@ -11,9 +11,10 @@ using WebAppPhotoSiteImages.Database;
 namespace WebAppPhotoSiteImages.Migrations
 {
     [DbContext(typeof(DbMgmt))]
-    partial class DbMgmtModelSnapshot : ModelSnapshot
+    [Migration("20180521191426_add_UserId_to_entities")]
+    partial class add_UserId_to_entities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

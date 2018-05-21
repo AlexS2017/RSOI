@@ -21,5 +21,7 @@ namespace Common
         public decimal AverageRate { get; set; }
 
         public byte[] Image { get; set; }
+
+        public Guid UserId { get; set; }
     }
 }

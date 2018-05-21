@@ -14,12 +14,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Newtonsoft.Json;
+using WebAppIdentity.Controllers;
 using WebSitePublic.Common;
 using WebSitePublic.Models;
 
 namespace WebSitePublic.Controllers
 {
-    public class HomeController : Controller
+    [Authorize]
+    public class HomeController : BaseController
     {
         HttpRequestHelper restCallImg;
 
@@ -28,17 +30,23 @@ namespace WebSitePublic.Controllers
             restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/");
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> MyImages()
         {
-            GetHomeImageMsg model = await GetLastImages();
+            GetHomeImageMsg model = await GetLastImages(token.UserId);
 
             return View(model);
         }
 
-        private async Task<GetHomeImageMsg> GetLastImages()
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
+        {
+            return View();
+        }
+
+        private async Task<GetHomeImageMsg> GetLastImages(Guid userId)
         {
             HttpContent content = new StringContent("", Encoding.UTF8, "application/json");
-            List<Guid> res = await restCallImg.CallRequest<List<Guid>>("getlastimgs", content, null, false, "");
+            List<Guid> res = await restCallImg.CallRequest<List<Guid>>("getlastimgs", content, null, false, userId.ToString());
 
             GetHomeImageMsg model = new GetHomeImageMsg() { ImageList = res };
             return model;
@@ -54,7 +62,19 @@ namespace WebSitePublic.Controllers
             return View();
         }
 
-        [Authorize]
+        [AllowAnonymous]
+        public async Task Signout()
+        {
+            //await HttpContext.Authentication.SignOutAsync("oidc");
+            await HttpContext.Authentication.SignOutAsync("Cookies");
+        }
+
+        public async Task<IActionResult> SignIn()
+        {
+            return RedirectToAction("MyImages");
+        }
+
+        [AllowAnonymous]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
@@ -65,6 +85,7 @@ namespace WebSitePublic.Controllers
             string sub = cl == null ? "" : cl.Value;
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -91,11 +112,10 @@ namespace WebSitePublic.Controllers
                     return View("Error");
                 }
 
-                msg = await GetLastImages();
+                msg = await GetLastImages(token.UserId);
             }
 
-            return View("Index", msg);
-            //return View("Index");
+            return View("MyImages", msg);
         }
 
         [HttpGet]
@@ -108,6 +128,7 @@ namespace WebSitePublic.Controllers
             return new FileStreamResult(ms, "image/jpeg");
         }
 
+        [AllowAnonymous]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

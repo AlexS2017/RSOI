@@ -38,7 +38,8 @@ namespace WebAppPhotoSiteImages.Services
                 Description = request.Description,
                 HashTag = request.HashTag,
                 Image = request.Image,
-                ImageTitle = request.ImageTitle
+                ImageTitle = request.ImageTitle,
+                UserId = request.UserId
             };
 
             _db.ImagePostMsgs.Add(img);
@@ -54,7 +55,8 @@ namespace WebAppPhotoSiteImages.Services
                 DateCreated = DateTime.UtcNow,
                 Comment = request.Comment,
                 Rate = request.Rate,
-                ImagePostMsgId = request.ImageId
+                ImagePostMsgId = request.ImageId,
+                UserId = request.UserId
             };
 
             _db.ImageCommentMsgs.Add(imgcomment);
@@ -66,13 +68,13 @@ namespace WebAppPhotoSiteImages.Services
         internal async Task<List<GetComments>> GetComments(Guid imgId)
         {
             List<GetComments> commentList = await _db.ImageCommentMsgs.Where(c => c.ImagePostMsgId == imgId).
-                OrderBy(c => c.DateCreated).Select(c => new GetComments() { Comment = c.Comment, Date = c.DateCreated, User = "", Rate = c.Rate }).ToListAsync();
+                OrderBy(c => c.DateCreated).Select(c => new GetComments() { Comment = c.Comment, Date = c.DateCreated, User = "", Rate = c.Rate, UserId = c.UserId }).ToListAsync();
             return commentList;
         }
 
-        internal async Task<List<Guid>> GetLastImages()
+        internal async Task<List<Guid>> GetLastImages(Guid userId)
         {
-            List<Guid> ids = await _db.ImagePostMsgs.OrderByDescending(i => i.DateCreated).Select(i => i.Id).Take(4).ToListAsync();
+            List<Guid> ids = await _db.ImagePostMsgs.Where(i => i.UserId == userId).OrderByDescending(i => i.DateCreated).Select(i => i.Id).Take(4).ToListAsync();
             return ids;
         }
 

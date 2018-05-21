@@ -19,5 +19,7 @@ namespace Common
         public Guid ImagePostMsgId { get; set; }
 
         public ImagePostMsg ImagePostMsg { get; set; }
+
+        public Guid UserId { get; set; }
     }
 }
