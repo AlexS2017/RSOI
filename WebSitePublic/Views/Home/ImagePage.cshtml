@@ -34,6 +34,7 @@
             <br />
             <div>Write your comment here</div>
             <input asp-for="Comment" class="form-control" />
+            Avg rating: @Model.AvgRate
             @*<input asp-for="Rate" class="form-control" style="width:100px;" />*@
             <select asp-for="Rate">
                 <option>Rate the image</option>

@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.DataEntities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,5 +21,7 @@ namespace WebAppPhotoSiteImages.Database
         public DbSet<ImagePostMsg> ImagePostMsgs { get; set; }
 
         public DbSet<ImageCommentMsg> ImageCommentMsgs { get; set; }
+
+        public DbSet<ImageRating> ImageRatings { get; set; }
     }
 }

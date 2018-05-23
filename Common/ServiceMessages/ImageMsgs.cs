@@ -43,6 +43,8 @@ namespace Common.ServiceMessages
 
         public int Rate { get; set; }
 
+        public decimal AvgRate { get; set; }
+
         public Guid ImageId { get; set; }
 
         public string AllCommentsInfo { get; set; }
@@ -58,8 +60,27 @@ namespace Common.ServiceMessages
 
         public string User { get; set; }
 
+        public Guid UserId { get; set; }
+    }
+
+    public class ImagePageInfo
+    {
         public int Rate { get; set; }
 
-        public Guid UserId { get; set; }
+        public decimal AvgRate { get; set; }
+
+        public List<GetComments> Comments { get; set; }
+    }
+
+    public class GetImgInfoMsg
+    {
+        public Guid ImageId { get; set; }
+
+        public Guid? UserId { get; set; }
+    }
+
+    public class SaveImgRating :  GetImgInfoMsg
+    {
+        public int Rate { get; set; }
     }
 }

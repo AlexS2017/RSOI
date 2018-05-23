@@ -11,9 +11,10 @@ using WebAppPhotoSiteImages.Database;
 namespace WebAppPhotoSiteImages.Migrations
 {
     [DbContext(typeof(DbMgmt))]
-    partial class DbMgmtModelSnapshot : ModelSnapshot
+    [Migration("20180523212515_add_rating_entity")]
+    partial class add_rating_entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

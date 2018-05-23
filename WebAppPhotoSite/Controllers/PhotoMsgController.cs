@@ -84,6 +84,13 @@ namespace WebAppPhotoSite.Controllers
             return res;
         }
 
+        [HttpPost("getimginfo")]
+        public async Task<ImagePageInfo> GetImgInfo([FromBody] GetImgInfoMsg request)
+        {
+            ImagePageInfo res = await _srv.GetImgInfo(request);
+            return res;
+        }
+
         [HttpGet("getlastimgs/{userId}")]
         public async Task<List<Guid>> GetLastImages(Guid userId)
         {

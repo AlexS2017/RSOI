@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.CommonCode;
 using Common.ServiceMessages;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -63,10 +64,13 @@ namespace WebSitePublic.Controllers
         }
 
         [AllowAnonymous]
-        public async Task Signout()
+        public async Task<IActionResult> Signout()
         {
-            //await HttpContext.Authentication.SignOutAsync("oidc");
-            await HttpContext.Authentication.SignOutAsync("Cookies");
+            await HttpContext.SignOutAsync("Cookies");
+            await HttpContext.SignOutAsync("oidc");
+            //await HttpContext.SignOutAsync(IdentityServer4.IdentityServerConstants.DefaultCookieAuthenticationScheme);
+
+            return View("Index");
         }
 
         public async Task<IActionResult> SignIn()
@@ -94,7 +98,8 @@ namespace WebSitePublic.Controllers
             if(ModelState.IsValid && myUplfile != null)
             {
                 //UploadImage
-                AddImageMsg addImgMsg = new AddImageMsg() { Description = msg.Description, HashTag = msg.HashTag, ImageTitle = msg.ImageTitle };
+                AddImageMsg addImgMsg = new AddImageMsg()
+                { Description = msg.Description, HashTag = msg.HashTag, ImageTitle = msg.ImageTitle, UserId = token.UserId };
                 string jsonToPost = JsonConvert.SerializeObject(addImgMsg);
                 HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
                 byte[] file = null;
@@ -147,6 +152,7 @@ namespace WebSitePublic.Controllers
         {
             if (ModelState.IsValid)
             {
+                addCommentmsg.UserId = token.UserId;
                 string jsonToPost = JsonConvert.SerializeObject(addCommentmsg);
                 HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
                 
@@ -169,15 +175,21 @@ namespace WebSitePublic.Controllers
         {
             AddImageCommentMsg model = new AddImageCommentMsg() { ImageId = id };
 
-            HttpContent content = new StringContent("", Encoding.UTF8, "application/json");
-            List<GetComments> res = await restCallImg.CallRequest<List<GetComments>>("getcomments", content, null, false, id.ToString());
+            GetImgInfoMsg getImgInfo = new GetImgInfoMsg() { ImageId = id, UserId = token == null ? (Guid?)null : token.UserId };
+            string jsonToPost = JsonConvert.SerializeObject(getImgInfo);
+            HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
+
+            ImagePageInfo res = await restCallImg.CallRequest<ImagePageInfo>("getimginfo", content);
+            List<GetComments> comments = res.Comments; 
 
             StringBuilder sb = new StringBuilder();
-            foreach (GetComments item in res)
+            foreach (GetComments item in comments)
             {
                 sb.AppendFormat($"[{item.Date.ToString("dd-MM-yy hh:mm")}]  {item.Comment}\r\n");
             }
             model.AllCommentsInfo = sb.ToString();
+            model.Rate = res.Rate;
+            model.AvgRate = res.AvgRate;
 
             return model;
         }
