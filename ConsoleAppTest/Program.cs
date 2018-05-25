@@ -1,5 +1,7 @@
 ﻿using IdentityModel.Client;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace ConsoleAppTest
@@ -13,7 +15,7 @@ namespace ConsoleAppTest
 
         public static async Task MainAsync()
         {
-            DiscoveryResponse disco = await DiscoveryClient.GetAsync("http://localhost:1002");
+            DiscoveryResponse disco = await DiscoveryClient.GetAsync("http://localhost:5000");
             if(disco.IsError)
             {
                 Console.WriteLine(disco.Error);
@@ -31,6 +33,21 @@ namespace ConsoleAppTest
 
             Console.WriteLine(tokenResponse.Json);
             Console.WriteLine("\n\n");
+
+            var client = new HttpClient();
+            client.SetBearerToken(tokenResponse.AccessToken);
+
+            var response = await client.GetAsync("http://localhost:1001/api/identity");
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+            }
+            else
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(JArray.Parse(content));
+            }
+
         }
     }
 }
