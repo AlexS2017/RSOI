@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,8 @@ namespace WebAppIdentity.Controllers
             }
             catch(Exception ex)
             {
-                //context.HttpContext.Authentication.SignOutAsync("oidc");
-                context.HttpContext.Authentication.SignOutAsync("Cookies");
+                context.HttpContext.SignOutAsync("Cookies");
+                context.HttpContext.SignOutAsync("oidc");               
                 return;
             }
 

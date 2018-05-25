@@ -123,6 +123,7 @@ namespace WebSitePublic.Controllers
             return View("MyImages", msg);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<FileStreamResult> ViewImage(Guid id)
         {
@@ -139,6 +140,7 @@ namespace WebSitePublic.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> ImagePage(Guid id)
         {
             AddImageCommentMsg model = new AddImageCommentMsg() { ImageId = id };
