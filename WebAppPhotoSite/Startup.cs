@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebAppPhotoSiteImages.Database;
 using WebAppPhotoSiteImages.Services;
+using WebSitePublic.Common;
 
 namespace WebAppPhotoSite
 {
@@ -29,6 +30,8 @@ namespace WebAppPhotoSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ImgAppSettings.AuthSrvUrl = Configuration["Auth:Url"];
+
             string sqlConnectionString = Configuration.GetConnectionString("DataAccessPostgreSqlProvider");
 
             services.AddDbContext<DbMgmt>(options =>

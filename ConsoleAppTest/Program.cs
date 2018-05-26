@@ -1,7 +1,10 @@
-﻿using IdentityModel.Client;
+﻿using Common.ServiceMessages;
+using IdentityModel.Client;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ConsoleAppTest
@@ -16,36 +19,81 @@ namespace ConsoleAppTest
         public static async Task MainAsync()
         {
             DiscoveryResponse disco = await DiscoveryClient.GetAsync("http://localhost:5000");
-            if(disco.IsError)
+            if (disco.IsError)
             {
                 Console.WriteLine(disco.Error);
                 return;
             }
 
-            TokenClient tokenClient = new TokenClient(disco.TokenEndpoint, "client_imgapp", "secret");
-            TokenResponse tokenResponse = await tokenClient.RequestClientCredentialsAsync("api_img");
-
-            if (tokenResponse.IsError)
+            if (false)
             {
-                Console.WriteLine(tokenResponse.Error);
-                return;
+                string clientName = "client_imgapp";
+                string secret = "secret";
+                string api = "api_img";
+                TokenClient tokenClient = new TokenClient(disco.TokenEndpoint, clientName, secret);
+                TokenResponse tokenResponse = null;
+
+                if (clientName != "client_imgapp_internal")
+                {
+                    tokenResponse = await tokenClient.RequestResourceOwnerPasswordAsync("q@q.com", "111111", "api_img");
+                }
+                else
+                {
+                    tokenResponse = await tokenClient.RequestClientCredentialsAsync(api);
+                }
+
+                if (tokenResponse.IsError)
+                {
+                    Console.WriteLine(tokenResponse.Error);
+                    return;
+                }
+
+                Console.WriteLine(tokenResponse.Json);
+                Console.WriteLine("\n\n");
+
+                var client = new HttpClient();
+                client.SetBearerToken(tokenResponse.AccessToken);
             }
 
-            Console.WriteLine(tokenResponse.Json);
-            Console.WriteLine("\n\n");
+            LoginRequest login = new LoginRequest()
+            {
+                appsecret = "secret",
+                clientid = "client_imgapp",
+                login = "q@q.com",
+                password = "111111"
+            };
 
-            var client = new HttpClient();
-            client.SetBearerToken(tokenResponse.AccessToken);
+            string url = "http://localhost:1001/api/identity/login";
+            string url1 = "http://localhost:1001/api/PhotoMsg/getcomments";
 
-            var response = await client.GetAsync("http://localhost:1001/api/identity");
+            string jsonToPost = JsonConvert.SerializeObject(login);
+            HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
+
+            HttpClient client1 = new HttpClient();
+            var response = await client1.PostAsync(url, content);
+
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
             }
             else
             {
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(JArray.Parse(content));
+                var respcontent = await response.Content.ReadAsStringAsync();
+                LoginResponse resp = JsonConvert.DeserializeObject<LoginResponse>(respcontent);
+                Console.WriteLine(JArray.Parse(respcontent));
+
+                client1.SetBearerToken(resp.Data.access_token);
+
+                var response1 = await client1.GetAsync($"{url1}/847505e3-8d2d-47c5-85d6-294ccf5ffa20");
+                if (!response1.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(response.StatusCode);
+                }
+                else
+                {
+                    var respcontent1 = await response1.Content.ReadAsStringAsync();
+                    Console.WriteLine(JArray.Parse(respcontent1));
+                }
             }
 
         }
