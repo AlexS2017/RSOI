@@ -28,7 +28,7 @@ namespace WebSitePublic.Controllers
 
         public HomeController()
         {
-            restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/");
+            restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/", PublicAppSettings.AuthSrvUrl);
         }
 
         public async Task<IActionResult> MyImages()

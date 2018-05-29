@@ -14,7 +14,7 @@ namespace WebAppAuth
         {
             return new List<Client>
             {
-                // client credentials client
+                // client credentials (public external api)
                 new Client
                 {
                     ClientId = "client_imgapp",
@@ -47,18 +47,6 @@ namespace WebAppAuth
                     },
                     AllowedScopes = { "api_img_internal" }
                 },
-                // resource owner password grant client
-                new Client
-                {
-                    ClientId = "ro.client_imgapp",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-                    AllowedScopes = { "api_img" }              
-                },
                 new Client
                 {
                     ClientId = "client_imgapp_mvc",
@@ -74,7 +62,7 @@ namespace WebAppAuth
                         new Secret("secret".Sha256())
                     },
 
-                    RedirectUris           = { "http://localhost:1000/signin-oidc" },
+                    RedirectUris           = { "http://localhost:1000/signin-oidc", "http://localhost:1000/signin-google" },
                     PostLogoutRedirectUris = { "http://localhost:1000/signout-callback-oidc" },
                     // scopes that client has access to
                     AllowedScopes =

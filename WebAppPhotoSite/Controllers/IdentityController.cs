@@ -22,7 +22,7 @@ namespace WebAppAuth.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<LoginResponse> Login(LoginRequest login)
+        public async Task<LoginResponse> Login([FromBody] LoginRequest login)
         {
             LoginResponse resp = new LoginResponse();
             try

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using IdentityModel.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -13,15 +14,17 @@ namespace Common.CommonCode
         string _serviceUrl = "";
         string _apiControllerRelUrl = "";
         string FullSrvUrl = "";
+        string _authSrvUrl = "";
 
-        public HttpRequestHelper(string srvUrl, string apiControllerUrl)
+        public HttpRequestHelper(string srvUrl, string apiControllerUrl, string authUrl)
         {
             _serviceUrl = srvUrl;
             _apiControllerRelUrl = apiControllerUrl;
             FullSrvUrl = $"{_serviceUrl}{_apiControllerRelUrl}";
+            _authSrvUrl = authUrl;
         }
 
-        public async Task<returnType> CallRequest<returnType>(string methodName, HttpContent param, byte[] file = null, bool isPost = true, string getParams = "") where returnType : new()
+        public async Task<returnType> CallRequest<returnType>(string methodName, HttpContent param, byte[] file = null, bool isPost = true, string getParams = "", bool useAuth = true) where returnType : new()
         {
             using (HttpClient client = new HttpClient())
             {
@@ -29,6 +32,23 @@ namespace Common.CommonCode
 
                 try
                 {
+                    if (useAuth)
+                    {
+                        string clientName = "client_imgapp_internal";
+                        string secret = "secret123";
+                        string api = "api_img_internal";
+
+                        TokenClient tokenClient = new TokenClient(_authSrvUrl, clientName, secret);
+                        TokenResponse tokenResponse = await tokenClient.RequestClientCredentialsAsync(api);
+
+                        if (tokenResponse.IsError)
+                        {
+                            throw new UnauthorizedAccessException($"Could not authorize for internal call: {tokenResponse.Exception?.Message}");
+                        }
+
+                        client.SetBearerToken(tokenResponse.AccessToken);
+                    }
+
                     HttpResponseMessage msg = null;
                     if (isPost)
                     {

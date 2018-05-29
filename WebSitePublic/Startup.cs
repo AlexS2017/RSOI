@@ -25,6 +25,7 @@ namespace WebSitePublic
         public void ConfigureServices(IServiceCollection services)
         {
             PublicAppSettings.ImgSrvUrl = Configuration["ImgService:url"];
+            PublicAppSettings.AuthSrvUrl = Configuration["Auth:Url"];
 
             services.AddMvc();
 

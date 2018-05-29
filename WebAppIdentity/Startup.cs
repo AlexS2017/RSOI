@@ -12,6 +12,8 @@ using WebAppIdentity.Data;
 using WebAppIdentity.Models;
 using WebAppIdentity.Services;
 using WebAppAuth;
+using Microsoft.AspNetCore.Authentication.Google;
+using IdentityServer4;
 
 namespace WebAppIdentity
 {
@@ -58,7 +60,17 @@ namespace WebAppIdentity
                 .AddInMemoryApiResources(Config.GetApiResources())
                 .AddInMemoryClients(Config.GetClients())
                 .AddAspNetIdentity<ApplicationUser>();
-                //.AddOperationalStore(build => build.UseNpgsql(authConnString));
+            //.AddOperationalStore(build => build.UseNpgsql(authConnString));
+
+            services.AddAuthentication()
+            .AddGoogle("Google", options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                //options.
+                options.ClientId = "434483408261-55tc8n0cs4ff1fe21ea8df2o443v2iuc.apps.googleusercontent.com";
+                options.ClientSecret = "3gcoTrEDPPJ0ukn_aYYT6PWo";
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

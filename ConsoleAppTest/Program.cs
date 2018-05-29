@@ -80,7 +80,7 @@ namespace ConsoleAppTest
             {
                 var respcontent = await response.Content.ReadAsStringAsync();
                 LoginResponse resp = JsonConvert.DeserializeObject<LoginResponse>(respcontent);
-                Console.WriteLine(JArray.Parse(respcontent));
+                Console.WriteLine(respcontent);
 
                 client1.SetBearerToken(resp.Data.access_token);
 
