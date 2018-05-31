@@ -10,5 +10,8 @@ namespace WebSitePublic.Common
         public static string ImgSrvUrl { get; set; }
 
         public static string AuthSrvUrl { get; set; }
+
+        public static string StatSrvUrl { get; set; }
+
     }
 }

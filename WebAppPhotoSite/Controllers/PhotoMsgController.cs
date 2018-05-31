@@ -27,23 +27,15 @@ namespace WebAppPhotoSite.Controllers
         }
 
         // GET api/PhotoMsg
-        [HttpGet]
-        public async Task<List<UserProfile>> Get()
+        [HttpGet("getusers")]
+        public async Task<List<UserProfile>> GetUsers()
         {
             List<UserProfile> res = await _srv.GetAllUsers();
             return res;
         }
 
-        // GET api/PhotoMsg/5
-        [HttpGet("{name}")]
-        public async Task<UserProfile> Get(string name)
-        {
-            UserProfile res = await _srv.GetUser(name);
-            return res;
-        }
-
-        [HttpGet("getbylastname/{name}")]
-        public async Task<UserProfile> GetLN(string name)
+        [HttpGet("getuserbylastname/{name}")]
+        public async Task<UserProfile> GetUserByLastName(string name)
         {
             UserProfile res = await _srv.GetUser(name);
             return res;

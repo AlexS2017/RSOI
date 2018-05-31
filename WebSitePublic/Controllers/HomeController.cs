@@ -25,10 +25,12 @@ namespace WebSitePublic.Controllers
     public class HomeController : BaseController
     {
         HttpRequestHelper restCallImg;
+        HttpRequestHelper restCallStat;
 
         public HomeController()
         {
             restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/", PublicAppSettings.AuthSrvUrl);
+            restCallStat = new HttpRequestHelper(PublicAppSettings.StatSrvUrl, "api/Stat/", PublicAppSettings.AuthSrvUrl);
         }
 
         public async Task<IActionResult> MyImages()
@@ -36,6 +38,15 @@ namespace WebSitePublic.Controllers
             GetHomeImageMsg model = await GetLastImages(token.UserId);
 
             return View(model);
+        }
+
+        private async Task<bool> AddStatAction(AddActionMsg msg)
+        {
+            string jsonToPost = JsonConvert.SerializeObject(msg);
+            HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
+
+            bool res = await restCallStat.CallRequest<bool>("addaction", content);
+            return res;
         }
 
         [AllowAnonymous]
@@ -63,23 +74,25 @@ namespace WebSitePublic.Controllers
             return View();
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> Signout()
         {
+            await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGOUT, Client = "website", UserInfo="user" });
+
             await HttpContext.SignOutAsync("Cookies");
             await HttpContext.SignOutAsync("oidc");
-            //await HttpContext.SignOutAsync(IdentityServer4.IdentityServerConstants.DefaultCookieAuthenticationScheme);
 
             return View("Index");
         }
 
         public async Task<IActionResult> SignIn()
         {
+            await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGIN, Client = "website", UserInfo = "user" });
             return RedirectToAction("MyImages");
         }
 
         [AllowAnonymous]
-        public IActionResult Contact()
+        public IActionResult Contact() //for test
         {
             ViewData["Message"] = "Your contact page.";
 
