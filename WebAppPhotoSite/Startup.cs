@@ -44,7 +44,7 @@ namespace WebAppPhotoSite
 
             services.AddAuthorization();
 
-            var authorityUrl = "http://localhost:5000";
+            var authorityUrl = ImgAppSettings.AuthSrvUrl;
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

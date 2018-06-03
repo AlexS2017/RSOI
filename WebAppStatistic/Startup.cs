@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebAppPhotoSiteImages.Database;
 using WebAppStatistic.Services;
+using WebSitePublic.Common;
 
 namespace WebAppStatistic
 {
@@ -26,7 +30,7 @@ namespace WebAppStatistic
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //ImgAppSettings.AuthSrvUrl = Configuration["Auth:Url"];
+            StatAppSettings.AuthSrvUrl = Configuration["Auth:Url"];
 
             string sqlConnectionString = Configuration.GetConnectionString("StatAccessPostgreSqlProvider");
 
@@ -40,20 +44,20 @@ namespace WebAppStatistic
 
             services.AddAuthorization();
 
-            //var authorityUrl = "http://localhost:5000";
+            var authorityUrl = StatAppSettings.AuthSrvUrl;
 
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer(options =>
-            //    {
-            //        options.Authority = authorityUrl;
-            //        options.RequireHttpsMetadata = false;
-            //        options.Audience = authorityUrl + "/resources";
-            //        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-            //        {
-            //            RoleClaimType = JwtClaimTypes.Role,
-            //            NameClaimType = JwtClaimTypes.Name
-            //        };
-            //    });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = authorityUrl;
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = authorityUrl + "/resources";
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    {
+                        RoleClaimType = JwtClaimTypes.Role,
+                        NameClaimType = JwtClaimTypes.Name
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,7 +70,7 @@ namespace WebAppStatistic
 
             app.UseStaticFiles();
 
-            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             app.UseAuthentication();
 

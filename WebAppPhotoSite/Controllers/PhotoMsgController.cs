@@ -27,19 +27,6 @@ namespace WebAppPhotoSite.Controllers
         }
 
         // GET api/PhotoMsg
-        [HttpGet("getusers")]
-        public async Task<List<UserProfile>> GetUsers()
-        {
-            List<UserProfile> res = await _srv.GetAllUsers();
-            return res;
-        }
-
-        [HttpGet("getuserbylastname/{name}")]
-        public async Task<UserProfile> GetUserByLastName(string name)
-        {
-            UserProfile res = await _srv.GetUser(name);
-            return res;
-        }
 
         [HttpPost("uploadimg")]
         public async Task<bool> UploadImage([FromForm] AddImageMsg request)

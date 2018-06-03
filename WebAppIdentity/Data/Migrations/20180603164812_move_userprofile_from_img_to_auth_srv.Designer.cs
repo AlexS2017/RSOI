@@ -11,9 +11,10 @@ using WebAppIdentity.Data;
 namespace WebAppIdentity.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180603164812_move_userprofile_from_img_to_auth_srv")]
+    partial class move_userprofile_from_img_to_auth_srv
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,8 +25,6 @@ namespace WebAppIdentity.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("Created");
 
                     b.Property<string>("Email");
 

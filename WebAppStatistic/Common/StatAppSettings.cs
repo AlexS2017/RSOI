@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebSitePublic.Common
 {
-    public class ImgAppSettings
+    public class StatAppSettings
     {
         public static string AuthSrvUrl { get; set; }
 

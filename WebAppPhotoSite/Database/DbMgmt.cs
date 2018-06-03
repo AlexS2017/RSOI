@@ -14,10 +14,6 @@ namespace WebAppPhotoSiteImages.Database
         {                
         }
 
-        public DbSet<UserProfile> UserProfiles { get; set; }
-
-        //public DbSet<TextMessage> TextMessages { get; set; }
-
         public DbSet<ImagePostMsg> ImagePostMsgs { get; set; }
 
         public DbSet<ImageCommentMsg> ImageCommentMsgs { get; set; }

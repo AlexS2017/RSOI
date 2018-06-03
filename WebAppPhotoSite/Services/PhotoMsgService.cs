@@ -19,23 +19,11 @@ namespace WebAppPhotoSiteImages.Services
             _db = dbContext;
         }
 
-        internal async Task<List<UserProfile>> GetAllUsers()
-        {
-            List<UserProfile> userList = await _db.UserProfiles.AsNoTracking().ToListAsync();
-            return userList;
-        }
-
-        internal async Task<UserProfile> GetUser(string name)
-        {
-            UserProfile user = await _db.UserProfiles.AsNoTracking().Where(u => u.FirstName == name).FirstOrDefaultAsync();
-            return user;
-        }
-
         internal async Task<bool> UploadImage(AddImageMsg request)
         {
             ImagePostMsg img = new ImagePostMsg()
             {
-                DateCreated = DateTime.UtcNow,
+                DateCreated = DateTime.Now,
                 Description = request.Description,
                 HashTag = request.HashTag,
                 Image = request.Image,
@@ -53,7 +41,7 @@ namespace WebAppPhotoSiteImages.Services
         {
             ImageCommentMsg imgcomment = new ImageCommentMsg()
             {
-                DateCreated = DateTime.UtcNow,
+                DateCreated = DateTime.Now,
                 Comment = request.Comment,
                 ImagePostMsgId = request.ImageId,
                 UserId = request.UserId

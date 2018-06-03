@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Common.ServiceMessages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +26,7 @@ namespace WebAppIdentity.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly UrlEncoder _urlEncoder;
+        private readonly UserProfileSrvcs _upsrv;
 
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
@@ -34,17 +36,47 @@ namespace WebAppIdentity.Controllers
           SignInManager<ApplicationUser> signInManager,
           IEmailSender emailSender,
           ILogger<ManageController> logger,
-          UrlEncoder urlEncoder)
+          UrlEncoder urlEncoder,
+          UserProfileSrvcs upsrv)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            _upsrv = upsrv;
         }
 
         [TempData]
         public string StatusMessage { get; set; }
+
+        [HttpGet("getusers")]
+        public async Task<List<GetUserProfileMsg>> GetUsers()
+        {
+            List<GetUserProfileMsg> res = await _upsrv.GetAllUsers();
+            return res;
+        }
+
+        [HttpGet("getuserbylastname/{name}")]
+        public async Task<GetUserProfileMsg> GetUserByLastName(string name)
+        {
+            GetUserProfileMsg res = await _upsrv.GetUser(name);
+            return res;
+        }
+
+        [HttpGet("getuserbyid/{id}")]
+        public async Task<GetUserProfileMsg> GetUserByLastName(Guid id)
+        {
+            GetUserProfileMsg res = await _upsrv.GetUser(id);
+            return res;
+        }
+
+        //[HttpPost("adduser")]
+        //public async Task<bool> AddUser([FromBody] AddUserProfileMsg request)
+        //{
+        //    bool res = await _upsrv.AddUser(request);
+        //    return res;
+        //}
 
         [HttpGet]
         public async Task<IActionResult> Index()

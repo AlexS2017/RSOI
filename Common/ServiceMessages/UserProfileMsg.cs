@@ -1,19 +1,20 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Common
+namespace Common.ServiceMessages
 {
-    public class UserProfile
+    public class AddUserProfileMsg : GetUserProfileMsg
     {
-        [Key]
         public Guid Id { get; set; }
+    }
 
+    public class GetUserProfileMsg
+    {
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
 
         public string Email { get; set; }
-
-        public DateTime Created { get; set; }
     }
 }

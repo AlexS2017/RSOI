@@ -22,7 +22,7 @@ namespace WebAppStatistic.Services
         {
             UserAction ua = new UserAction()
             {
-                DateCreated = DateTime.UtcNow,
+                DateCreated = DateTime.Now,
                 Action = request.Action,
                 EntityId = request.EntityId,
                 UserProfileId = request.UserId,

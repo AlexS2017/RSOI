@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Common.ServiceMessages;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
@@ -29,19 +30,22 @@ namespace WebAppIdentity.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly IIdentityServerInteractionService _interaction;
+        private readonly UserProfileSrvcs _upsrv;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger,
-            IIdentityServerInteractionService interaction)
+            IIdentityServerInteractionService interaction,
+            UserProfileSrvcs upsrv)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _interaction = interaction;
+            _upsrv = upsrv;
         }
 
         [TempData]
@@ -233,6 +237,14 @@ namespace WebAppIdentity.Controllers
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    AddUserProfileMsg req = new AddUserProfileMsg()
+                    { Email = model.Email, FirstName = model.Email, LastName = "", Id = new Guid(user.Id) };
+                    bool bup = await _upsrv.AddUser(req);
+                    if(!bup)
+                    {
+                        _logger.LogInformation("User profile is not created. Try to fix it.");
+                    }
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
@@ -250,7 +262,7 @@ namespace WebAppIdentity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> LogoutLocal()
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");

@@ -25,6 +25,51 @@ namespace ConsoleAppTest
                 return;
             }
 
+            HttpClient client1 = new HttpClient();
+            string url1 = "http://localhost:1002/api/stat/getallstat";
+
+            string clientName = "client_imgapp_internal";
+            string secret = "secret123";
+            string api = "api_img_internal";
+
+            TokenClient tokenClient = new TokenClient(disco.TokenEndpoint, clientName, secret);
+
+            TokenResponse tokenResponse = await tokenClient.RequestClientCredentialsAsync(api);            
+
+            if (tokenResponse.IsError)
+            {
+                Console.WriteLine(tokenResponse.Error);
+                return;
+            }
+            else
+            {
+                Console.WriteLine(tokenResponse.Json);
+
+                client1.SetBearerToken(tokenResponse.AccessToken);
+
+                var response1 = await client1.GetAsync($"{url1}");
+                if (!response1.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(response1.StatusCode);
+                }
+                else
+                {
+                    var respcontent1 = await response1.Content.ReadAsStringAsync();
+                    Console.WriteLine(JArray.Parse(respcontent1));
+                }
+            }
+
+        }
+
+        public static async Task MainAsync1()
+        {
+            DiscoveryResponse disco = await DiscoveryClient.GetAsync("http://localhost:5000");
+            if (disco.IsError)
+            {
+                Console.WriteLine(disco.Error);
+                return;
+            }
+
             if (false)
             {
                 string clientName = "client_imgapp";

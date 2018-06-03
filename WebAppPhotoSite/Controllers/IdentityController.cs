@@ -27,7 +27,7 @@ namespace WebAppAuth.Controllers
             LoginResponse resp = new LoginResponse();
             try
             {
-                TokenClient tokenClient = new TokenClient(ImgAppSettings.AuthSrvUrl, "client_imgapp", "secret");
+                TokenClient tokenClient = new TokenClient(ImgAppSettings.AuthSrvTokenUrl, "client_imgapp", "secret");
 
                 TokenResponse result = await tokenClient.RequestResourceOwnerPasswordAsync(login.login, login.password, "api_img");
                 if (result == null || result.IsError)
