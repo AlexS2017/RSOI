@@ -1,7 +1,10 @@
-﻿@model Common.ServiceMessages.GetHomeImageMsg
+﻿@model Common.ServiceMessages.HomePageMsg
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <h2>Welcome to new images app!</h2>
+<br/>
+<br/>
+<h3>@Model.ErrorMessage</h3>

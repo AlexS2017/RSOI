@@ -19,7 +19,7 @@ namespace WebAppPhotoSiteImages.Services
             _db = dbContext;
         }
 
-        internal async Task<bool> UploadImage(AddImageMsg request)
+        internal async Task<AddImageResponse> UploadImage(AddImageMsg request)
         {
             ImagePostMsg img = new ImagePostMsg()
             {
@@ -34,10 +34,11 @@ namespace WebAppPhotoSiteImages.Services
             _db.ImagePostMsgs.Add(img);
             await _db.SaveChangesAsync();
 
-            return true;
+            AddImageResponse res = new AddImageResponse() { ImageId=img.Id, IsSuccess = true };
+            return res;
         }
 
-        internal async Task<bool> AddCommentToImage(AddImageCommentMsg request)
+        internal async Task<AddImageCommentResponse> AddCommentToImage(AddImageCommentMsg request)
         {
             ImageCommentMsg imgcomment = new ImageCommentMsg()
             {
@@ -52,7 +53,8 @@ namespace WebAppPhotoSiteImages.Services
 
             await SaveRating(new SaveImgRating() { ImageId = request.ImageId, UserId = request.UserId, Rate = request.Rate });
 
-            return true;
+            AddImageCommentResponse res = new AddImageCommentResponse() { CommentId = imgcomment.Id, IsSuccess = true };
+            return res;
         }
 
         internal async Task<List<GetComments>> GetComments(Guid imgId)

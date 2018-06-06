@@ -17,7 +17,7 @@ using WebAppIdentity.Services;
 
 namespace WebAppIdentity.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("[controller]/[action]")]
     public class ManageController : Controller
     {
@@ -49,34 +49,6 @@ namespace WebAppIdentity.Controllers
 
         [TempData]
         public string StatusMessage { get; set; }
-
-        [HttpGet("getusers")]
-        public async Task<List<GetUserProfileMsg>> GetUsers()
-        {
-            List<GetUserProfileMsg> res = await _upsrv.GetAllUsers();
-            return res;
-        }
-
-        [HttpGet("getuserbylastname/{name}")]
-        public async Task<GetUserProfileMsg> GetUserByLastName(string name)
-        {
-            GetUserProfileMsg res = await _upsrv.GetUser(name);
-            return res;
-        }
-
-        [HttpGet("getuserbyid/{id}")]
-        public async Task<GetUserProfileMsg> GetUserByLastName(Guid id)
-        {
-            GetUserProfileMsg res = await _upsrv.GetUser(id);
-            return res;
-        }
-
-        //[HttpPost("adduser")]
-        //public async Task<bool> AddUser([FromBody] AddUserProfileMsg request)
-        //{
-        //    bool res = await _upsrv.AddUser(request);
-        //    return res;
-        //}
 
         [HttpGet]
         public async Task<IActionResult> Index()

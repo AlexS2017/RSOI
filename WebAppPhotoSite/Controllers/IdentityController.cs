@@ -1,4 +1,5 @@
-﻿using Common.ServiceMessages;
+﻿using Common.CommonCode;
+using Common.ServiceMessages;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,14 +7,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAppPhotoSiteImages.Common;
+using WebAppPhotoSiteImages.Controllers;
 using WebSitePublic.Common;
 
 namespace WebAppAuth.Controllers
 {
     [Route("api/[controller]")]
     //[Authorize]
-    public class IdentityController : ControllerBase
+    public class IdentityController : BaseController
     {
+        StatSrvHelper statSrvHelp;
+
+        public IdentityController()
+        {
+            HttpRequestHelper restCallStat = new HttpRequestHelper(ImgAppSettings.StatSrvUrl, "api/Stat/", ImgAppSettings.AuthSrvTokenUrl);
+            statSrvHelp = new StatSrvHelper(restCallStat);
+        }
+
         [HttpGet]
         [Authorize]
         public IActionResult Get()
@@ -47,6 +58,8 @@ namespace WebAppAuth.Controllers
                     resp.Message = "Success";
                     resp.Data = data;
                 }
+
+                await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGIN, Client = "public_api", UserInfo = token.Email });
             }
             catch(Exception ex)
             {

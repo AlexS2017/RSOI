@@ -15,6 +15,15 @@ namespace Common.ServiceMessages
         public byte[] Image { get; set; }
 
         public Guid UserId { get; set; }
+
+        public string Client { get; set; }
+    }
+
+    public class AddImageResponse
+    {
+        public bool IsSuccess { get; set; }
+
+        public Guid? ImageId { get; set; }
     }
 
     public class GetImageMsg : AddImageMsg
@@ -37,6 +46,13 @@ namespace Common.ServiceMessages
         public List<Guid> ImageList { get; set; }
     }
 
+    public class HomePageMsg
+    {
+        public string ErrorMessage { get; set; }
+
+        public string Message { get; set; }
+    }
+
     public class AddImageCommentMsg
     {
         public string Comment { get; set; }
@@ -50,6 +66,15 @@ namespace Common.ServiceMessages
         public string AllCommentsInfo { get; set; }
 
         public Guid UserId { get; set; }
+
+        public string Client { get; set; }
+    }
+
+    public class AddImageCommentResponse
+    {
+        public bool IsSuccess { get; set; }
+
+        public Guid? CommentId { get; set; }
     }
 
     public class GetComments

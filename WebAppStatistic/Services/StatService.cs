@@ -26,7 +26,8 @@ namespace WebAppStatistic.Services
                 Action = request.Action,
                 EntityId = request.EntityId,
                 UserProfileId = request.UserId,
-                UserInfo = request.UserInfo
+                UserInfo = request.UserInfo,
+                Client = request.Client
             };
 
             _db.UserActions.Add(ua);

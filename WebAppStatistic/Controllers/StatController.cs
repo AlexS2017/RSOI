@@ -11,7 +11,7 @@ namespace WebAppStatistic.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class StatController : Controller
+    public class StatController : ControllerBase
     {
         StatService _srv;
 

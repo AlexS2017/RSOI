@@ -26,11 +26,16 @@ namespace WebSitePublic.Controllers
     {
         HttpRequestHelper restCallImg;
         HttpRequestHelper restCallStat;
+        //HttpRequestHelper restCallUser;
 
         public HomeController()
         {
-            restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/", PublicAppSettings.AuthSrvUrl);
-            restCallStat = new HttpRequestHelper(PublicAppSettings.StatSrvUrl, "api/Stat/", PublicAppSettings.AuthSrvUrl);
+            restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/", PublicAppSettings.AuthSrvTokenUrl);
+            restCallStat = new HttpRequestHelper(PublicAppSettings.StatSrvUrl, "api/Stat/", PublicAppSettings.AuthSrvTokenUrl);
+            if(restCallUser == null)
+            {
+                restCallUser = new HttpRequestHelper(PublicAppSettings.AuthSrvUrl, "api/user/", PublicAppSettings.AuthSrvTokenUrl);
+            }
         }
 
         public async Task<IActionResult> MyImages()
@@ -42,17 +47,52 @@ namespace WebSitePublic.Controllers
 
         private async Task<bool> AddStatAction(AddActionMsg msg)
         {
-            string jsonToPost = JsonConvert.SerializeObject(msg);
-            HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
+            try
+            {
+                string jsonToPost = JsonConvert.SerializeObject(msg);
+                HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
 
-            bool res = await restCallStat.CallRequest<bool>("addaction", content);
-            return res;
+                bool res = await restCallStat.CallRequest<bool>("addaction", content);
+                return res;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
         }
 
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View();
+            bool resImgSrv = false;
+            bool resAuthSrv = false;
+
+            try
+            {
+                resImgSrv = await restCallImg.CallRequest<bool>("checksrvstatus", new StringContent(""), null, false, "", false);
+            }
+            catch { }
+
+            try
+            {
+                resAuthSrv = await restCallUser.CallRequest<bool>("checksrvstatus", new StringContent(""), null, false, "", false);
+            }
+            catch { }
+
+            string error = "";
+
+            if (!resImgSrv)
+            {
+                error = "Внимание, в данный момент наблюдаются временные перебои при работе с картинками. Наши специалисты работают над исправлением ситуации. В данный момент функциональность нашего сервиса недоступна, зайдите сюда чуть позже..\n ";
+            }
+
+            if (!resAuthSrv)
+            {
+                error += "В данный момент наблюдаются временные неполадки с доступом к личному кабинету. Наши специалисты работают над исправлением ситуации. В данный момент функциональность нашего сервиса недоступна, зайдите сюда чуть позже..\n ";
+            }
+
+            HomePageMsg msg = new HomePageMsg() { ErrorMessage = error };
+            return View(msg);
         }
 
         private async Task<GetHomeImageMsg> GetLastImages(Guid userId)
@@ -77,7 +117,7 @@ namespace WebSitePublic.Controllers
         //[AllowAnonymous]
         public async Task<IActionResult> Signout()
         {
-            await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGOUT, Client = "website", UserInfo="user" });
+            await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGOUT, Client = "website", UserInfo=token.Email });
 
             await HttpContext.SignOutAsync("Cookies");
             await HttpContext.SignOutAsync("oidc");
@@ -87,7 +127,7 @@ namespace WebSitePublic.Controllers
 
         public async Task<IActionResult> SignIn()
         {
-            await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGIN, Client = "website", UserInfo = "user" });
+            await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGIN, Client = "website", UserInfo = token.Email });
             return RedirectToAction("MyImages");
         }
 
@@ -112,7 +152,7 @@ namespace WebSitePublic.Controllers
             {
                 //UploadImage
                 AddImageMsg addImgMsg = new AddImageMsg()
-                { Description = msg.Description, HashTag = msg.HashTag, ImageTitle = msg.ImageTitle, UserId = token.UserId };
+                { Description = msg.Description, HashTag = msg.HashTag, ImageTitle = msg.ImageTitle, UserId = token.UserId, Client = "website" };
                 string jsonToPost = JsonConvert.SerializeObject(addImgMsg);
                 HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
                 byte[] file = null;
@@ -123,9 +163,9 @@ namespace WebSitePublic.Controllers
                         file = fs.ReadFully(myUplfile.Length);
                     }
                 }
-                bool res = await restCallImg.CallRequest<bool>("uploadimg", content, file);
+                AddImageResponse res = await restCallImg.CallRequest<AddImageResponse>("uploadimg", content, file);
 
-                if(!res)
+                if(!res.IsSuccess)
                 {
                     return View("Error");
                 }
@@ -168,12 +208,13 @@ namespace WebSitePublic.Controllers
             if (ModelState.IsValid)
             {
                 addCommentmsg.UserId = token.UserId;
+                addCommentmsg.Client = "website";
                 string jsonToPost = JsonConvert.SerializeObject(addCommentmsg);
                 HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");
-                
-                bool res = await restCallImg.CallRequest<bool>("commentimg", content);
 
-                if (!res)
+                AddImageCommentResponse res = await restCallImg.CallRequest<AddImageCommentResponse>("commentimg", content);
+
+                if (!res.IsSuccess)
                 {
                     return View("Error");
                 }

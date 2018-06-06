@@ -31,6 +31,7 @@ namespace WebAppPhotoSite
         public void ConfigureServices(IServiceCollection services)
         {
             ImgAppSettings.AuthSrvUrl = Configuration["Auth:Url"];
+            ImgAppSettings.StatSrvUrl = Configuration["StatService:Url"];
 
             string sqlConnectionString = Configuration.GetConnectionString("DataAccessPostgreSqlProvider");
 

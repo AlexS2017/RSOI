@@ -9,6 +9,8 @@ namespace WebSitePublic.Common
     {
         public static string AuthSrvUrl { get; set; }
 
-        public static string AuthSrvTokenUrl { get { return $"{AuthSrvUrl}/connect/token"; } }
+        public static string AuthSrvTokenUrl { get { return $"{AuthSrvUrl}connect/token"; } }
+
+        public static string StatSrvUrl { get; set; }
     }
 }
