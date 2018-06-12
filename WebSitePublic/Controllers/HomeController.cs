@@ -170,6 +170,8 @@ namespace WebSitePublic.Controllers
                     return View("Error");
                 }
 
+                await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.UPLOAD_IMG, Client="website", UserInfo = token.Email, EntityId = res.ImageId });
+
                 msg = await GetLastImages(token.UserId);
             }
 
@@ -219,6 +221,7 @@ namespace WebSitePublic.Controllers
                     return View("Error");
                 }
 
+                await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.ADD_COMMENT, Client = "website", UserInfo = token.Email, EntityId = res.CommentId });
                // msg = await GetLastImages();
             }
 

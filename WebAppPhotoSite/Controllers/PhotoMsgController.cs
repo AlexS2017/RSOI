@@ -54,7 +54,10 @@ namespace WebAppPhotoSite.Controllers
 
                 if(res.IsSuccess)
                 {
-                    await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.UPLOAD_IMG, Client = request.Client, UserInfo = token.Email, EntityId = res.ImageId });
+                    if (token != null)
+                    {
+                        await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.UPLOAD_IMG, Client = request.Client, UserInfo = token.Email, EntityId = res.ImageId });
+                    }
                 }
 
                 return res;
@@ -72,7 +75,10 @@ namespace WebAppPhotoSite.Controllers
 
             if(res.IsSuccess)
             {
-                await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.ADD_COMMENT, Client = request.Client, UserInfo = token.Email, EntityId = res.CommentId });
+                if (token != null)
+                {
+                    await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.ADD_COMMENT, Client = request.Client, UserInfo = token.Email, EntityId = res.CommentId });
+                }
             }
 
             return res;

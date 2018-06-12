@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-WebAppIdentity-56ADDC7E-F8D4-400A-A72F-9FF07FA49770</UserSecretsId>
+    <Configurations>Debug;Release;run</Configurations>
   </PropertyGroup>
 
 

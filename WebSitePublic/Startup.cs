@@ -44,7 +44,7 @@ namespace WebSitePublic
             {
                 options.SignInScheme = "Cookies";
 
-                options.Authority = "http://localhost:5000";
+                options.Authority = PublicAppSettings.AuthSrvUrl;
                 options.RequireHttpsMetadata = false;
 
                 options.ClientId = "client_imgapp_mvc";

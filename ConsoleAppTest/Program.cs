@@ -13,7 +13,7 @@ namespace ConsoleAppTest
     {
         static void Main(string[] args)
         {
-            MainAsync().GetAwaiter().GetResult();
+            MainAsync1().GetAwaiter().GetResult();
         }
 
         public static async Task MainAsync()
@@ -26,7 +26,8 @@ namespace ConsoleAppTest
             }
 
             HttpClient client1 = new HttpClient();
-            string url1 = "http://localhost:1002/api/stat/getallstat";
+            //string url1 = "http://localhost:1002/api/stat/getallstat";
+            string url1 = "http://localhost:5000/api/user/getuserbyid/1262cef4-a57e-40c5-929e-f056361110d6";
 
             string clientName = "client_imgapp_internal";
             string secret = "secret123";
@@ -70,6 +71,8 @@ namespace ConsoleAppTest
                 return;
             }
 
+            string url1 = "http://localhost:1001/api/PhotoMsg/getcomments";
+
             if (false)
             {
                 string clientName = "client_imgapp";
@@ -98,6 +101,18 @@ namespace ConsoleAppTest
 
                 var client = new HttpClient();
                 client.SetBearerToken(tokenResponse.AccessToken);
+
+                var response1 = await client.GetAsync($"{url1}/847505e3-8d2d-47c5-85d6-294ccf5ffa20");
+                if (!response1.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(response1.StatusCode);
+                }
+                else
+                {
+                    var respcontent1 = await response1.Content.ReadAsStringAsync();
+                    Console.WriteLine(JArray.Parse(respcontent1));
+                }
+
             }
 
             LoginRequest login = new LoginRequest()
@@ -109,7 +124,7 @@ namespace ConsoleAppTest
             };
 
             string url = "http://localhost:1001/api/identity/login";
-            string url1 = "http://localhost:1001/api/PhotoMsg/getcomments";
+            //string url1 = "http://localhost:1001/api/PhotoMsg/getcomments";
 
             string jsonToPost = JsonConvert.SerializeObject(login);
             HttpContent content = new StringContent(jsonToPost, Encoding.UTF8, "application/json");

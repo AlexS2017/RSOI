@@ -10,6 +10,7 @@ using WebAppIdentity.Services;
 namespace WebAppIdentity.Controllers
 {
     [Route("api/[controller]")]
+    //[Authorize("InternalServerAuthorization")]
     [Authorize]
     public class UserController : ControllerBase
     {
@@ -35,6 +36,7 @@ namespace WebAppIdentity.Controllers
         }
 
         [HttpGet("getuserbyid/{id}")]
+        [AllowAnonymous]
         public async Task<GetUserProfileMsg> GetUserById(Guid id)
         {
             GetUserProfileMsg res = await _upsrv.GetUser(id);

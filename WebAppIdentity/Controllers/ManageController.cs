@@ -17,7 +17,7 @@ using WebAppIdentity.Services;
 
 namespace WebAppIdentity.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("[controller]/[action]")]
     public class ManageController : Controller
     {

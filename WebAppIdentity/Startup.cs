@@ -14,6 +14,10 @@ using WebAppIdentity.Services;
 using WebAppAuth;
 using Microsoft.AspNetCore.Authentication.Google;
 using IdentityServer4;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using IdentityModel;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebAppIdentity
 {
@@ -63,7 +67,16 @@ namespace WebAppIdentity
                 .AddAspNetIdentity<ApplicationUser>();
             //.AddOperationalStore(build => build.UseNpgsql(authConnString));
 
+            string authorityUrl = Configuration["Auth:Url"];
+
             services.AddAuthentication()
+            //    AddScheme("internalsrv", options =>
+            //    {
+            //        options.Authority = authorityUrl;
+            //        options.RequireHttpsMetadata = false;
+            //        options.ap
+            //    }
+            //)
             .AddGoogle("Google", options =>
             {
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
@@ -72,6 +85,29 @@ namespace WebAppIdentity
                 options.ClientSecret = "3gcoTrEDPPJ0ukn_aYYT6PWo";
             });
 
+
+            //services.AddAuthorization(options => 
+            //{
+            //    options.AddPolicy("InternalServerAuthorization",
+            //        policy =>
+            //        {
+            //            policy.AuthenticationSchemes.Add("internalsrv");
+            //            policy.RequireAuthenticatedUser();
+            //        }); 
+            // });
+
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.Authority = authorityUrl;
+            //        options.RequireHttpsMetadata = false;
+            //        options.Audience = authorityUrl + "resources";
+            //        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+            //        {
+            //            RoleClaimType = JwtClaimTypes.Role,
+            //            NameClaimType = JwtClaimTypes.Name
+            //        };
+            //    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,8 +126,13 @@ namespace WebAppIdentity
 
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            
+            //app.UseIdentity();
             app.UseIdentityServer();
+
+            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            //app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

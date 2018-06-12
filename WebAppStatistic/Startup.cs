@@ -51,7 +51,7 @@ namespace WebAppStatistic
                 {
                     options.Authority = authorityUrl;
                     options.RequireHttpsMetadata = false;
-                    options.Audience = authorityUrl + "/resources";
+                    options.Audience = authorityUrl + "resources";
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
                         RoleClaimType = JwtClaimTypes.Role,

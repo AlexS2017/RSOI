@@ -45,14 +45,14 @@ namespace WebAppPhotoSite
 
             services.AddAuthorization();
 
-            var authorityUrl = ImgAppSettings.AuthSrvUrl;
+            string authorityUrl = ImgAppSettings.AuthSrvUrl;
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.Authority = authorityUrl;
                     options.RequireHttpsMetadata = false;
-                    options.Audience = authorityUrl + "/resources";
+                    options.Audience = authorityUrl + "resources";
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
                         RoleClaimType = JwtClaimTypes.Role,

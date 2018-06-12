@@ -1,5 +1,6 @@
 ﻿using Common.CommonCode;
 using Common.ServiceMessages;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -44,6 +45,7 @@ namespace WebAppIdentity.Controllers
                     {
                         token.Email = "error receiving email";
                     }
+                    //token.Email = "";
                 }
             }
             catch(Exception ex)
@@ -55,6 +57,28 @@ namespace WebAppIdentity.Controllers
 
             base.OnActionExecuting(context);
         }
+
+        protected TokenInfo GetToken(string bearer, bool isSubstr = true)
+        {
+            string token = bearer;
+            if (isSubstr)
+            {
+                token = bearer.Substring(7);
+            }
+
+            UserInfoClient info_client = new UserInfoClient($"{PublicAppSettings.AuthSrvUrl}connect/userinfo");
+            UserInfoResponse info_result = info_client.GetAsync(token).Result;
+
+            Claim cn = info_result.Claims.FirstOrDefault(p => p.Type == "name");
+            TokenInfo tokenInfo = new TokenInfo
+            {
+                sub = info_result.Claims.First(p => p.Type == "sub").Value,
+                Email = cn == null ? "unknown" : cn.Value
+            };
+            return tokenInfo;
+        }
+
     }
+
 
 }

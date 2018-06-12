@@ -82,6 +82,11 @@ namespace WebAppAuth
             {
                 new ApiResource("api_img", "My API"),
                 new ApiResource("api_img_internal", "My internal API")
+                {
+                    ApiSecrets = {new Secret("secret123".Sha256()) },
+                    Scopes = {new Scope(){ Name= "api_img_internal"} },
+                   // UserClaims = { "role", "user", }
+                }
             };
         }
 

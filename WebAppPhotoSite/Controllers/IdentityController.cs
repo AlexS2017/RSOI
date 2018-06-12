@@ -40,7 +40,7 @@ namespace WebAppAuth.Controllers
             {
                 TokenClient tokenClient = new TokenClient(ImgAppSettings.AuthSrvTokenUrl, "client_imgapp", "secret");
 
-                TokenResponse result = await tokenClient.RequestResourceOwnerPasswordAsync(login.login, login.password, "api_img");
+                TokenResponse result = await tokenClient.RequestResourceOwnerPasswordAsync(login.login, login.password, "api_img openid profile");
                 if (result == null || result.IsError)
                 {
                     resp.IsSuccess = false;
@@ -59,7 +59,11 @@ namespace WebAppAuth.Controllers
                     resp.Data = data;
                 }
 
-                await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGIN, Client = "public_api", UserInfo = token.Email });
+                token = GetToken(resp.Data.access_token, false);
+                if (token != null)
+                {
+                    await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGIN, Client = "public_api", UserInfo = token.Email });
+                }
             }
             catch(Exception ex)
             {
