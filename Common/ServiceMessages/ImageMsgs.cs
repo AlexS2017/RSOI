@@ -48,7 +48,9 @@ namespace Common.ServiceMessages
 
     public class HomePageMsg
     {
-        public string ErrorMessage { get; set; }
+        public string ErrorMessageImg { get; set; }
+
+        public string ErrorMessageAuth { get; set; }
 
         public string Message { get; set; }
     }

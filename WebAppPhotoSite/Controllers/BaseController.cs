@@ -17,7 +17,7 @@ namespace WebAppPhotoSiteImages.Controllers
     public class BaseController : Controller
     {
         public TokenInfo token = null;
-        HttpRequestHelper restCallUser;
+        //HttpRequestHelper restCallUser;
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

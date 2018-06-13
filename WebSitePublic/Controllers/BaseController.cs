@@ -23,6 +23,9 @@ namespace WebAppIdentity.Controllers
         {
             try
             {
+                ViewBag.imgerr = false;
+                ViewBag.autherr = false;
+
                 if (User != null
                     && User.Identity != null
                     && User.Identity.IsAuthenticated)

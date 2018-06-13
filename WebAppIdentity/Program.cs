@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace WebAppIdentity
@@ -14,7 +15,27 @@ namespace WebAppIdentity
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            IWebHost host = BuildWebHost(args);
+
+            using (IServiceScope scope = host.Services.CreateScope())
+            {
+                IServiceProvider services = scope.ServiceProvider;
+
+                try
+                {
+                    var serviceProvider = services.GetRequiredService<IServiceProvider>();
+                    var configuration = services.GetRequiredService<IConfiguration>();
+                    Seed.CreateRoles(serviceProvider, configuration).Wait();
+                }
+                catch (Exception exception)
+                {
+                    //to log error
+                    //var logger = services.GetRequiredService<ILogger<Program>>();
+                    //logger.LogError(exception, "An error occurred while creating roles");
+                }
+            }
+                
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

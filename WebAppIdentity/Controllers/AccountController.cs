@@ -245,6 +245,8 @@ namespace WebAppIdentity.Controllers
                         _logger.LogInformation("User profile is not created. Try to fix it.");
                     }
 
+                    await _userManager.AddToRoleAsync(user, "User");
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);

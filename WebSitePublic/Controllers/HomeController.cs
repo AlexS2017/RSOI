@@ -79,19 +79,22 @@ namespace WebSitePublic.Controllers
             }
             catch { }
 
-            string error = "";
+            string errorImg = "";
+            string errorAuth = "";
 
             if (!resImgSrv)
             {
-                error = "Внимание, в данный момент наблюдаются временные перебои при работе с картинками. Наши специалисты работают над исправлением ситуации. В данный момент функциональность нашего сервиса недоступна, зайдите сюда чуть позже..\n ";
+                errorImg = "Внимание, в данный момент наблюдаются временные перебои при работе с картинками. Наши специалисты работают над исправлением ситуации. В данный момент функциональность нашего сервиса недоступна, зайдите сюда чуть позже..\n ";
+                ViewBag.imgerr = true;
             }
 
             if (!resAuthSrv)
             {
-                error += "В данный момент наблюдаются временные неполадки с доступом к личному кабинету. Наши специалисты работают над исправлением ситуации. В данный момент функциональность нашего сервиса недоступна, зайдите сюда чуть позже..\n ";
+                errorAuth = "В данный момент наблюдаются временные неполадки с доступом к личному кабинету. Наши специалисты работают над исправлением ситуации. В данный момент функциональность нашего сервиса недоступна, зайдите сюда чуть позже..\n ";
+                ViewBag.autherr = true;
             }
 
-            HomePageMsg msg = new HomePageMsg() { ErrorMessage = error };
+            HomePageMsg msg = new HomePageMsg() { ErrorMessageImg = errorImg, ErrorMessageAuth = errorAuth };
             return View(msg);
         }
 
@@ -122,7 +125,7 @@ namespace WebSitePublic.Controllers
             await HttpContext.SignOutAsync("Cookies");
             await HttpContext.SignOutAsync("oidc");
 
-            return View("Index");
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> SignIn()
