@@ -34,7 +34,8 @@
                 <ul class="nav navbar-nav">
                     <li hide-if="@ViewBag.imgerr"><a asp-area="" asp-controller="Home" asp-action="MyImages">MyImages</a></li>
                     @*<li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>*@
-                    <li show-if="@User.IsInRole("Admin")"><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li show-if="@User.IsInRole("Admin")"><a asp-area="" asp-controller="Home" asp-action="Stat">Statistic</a></li>
                     <li hide-if="User.Identity.IsAuthenticated" class="nav navbar-nav navbar-right">
                         <a hide-if="@ViewBag.autherr" asp-controller="Home" asp-action="SignIn">Sign in</a>
                     </li>

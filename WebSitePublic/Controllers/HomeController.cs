@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Common.CommonCode;
 using Common.ServiceMessages;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,16 +27,13 @@ namespace WebSitePublic.Controllers
     {
         HttpRequestHelper restCallImg;
         HttpRequestHelper restCallStat;
-        //HttpRequestHelper restCallUser;
+        HttpRequestHelper restCallUser;
 
         public HomeController()
         {
             restCallImg = new HttpRequestHelper(PublicAppSettings.ImgSrvUrl, "api/PhotoMsg/", PublicAppSettings.AuthSrvTokenUrl);
             restCallStat = new HttpRequestHelper(PublicAppSettings.StatSrvUrl, "api/Stat/", PublicAppSettings.AuthSrvTokenUrl);
-            if(restCallUser == null)
-            {
-                restCallUser = new HttpRequestHelper(PublicAppSettings.AuthSrvUrl, "api/user/", PublicAppSettings.AuthSrvTokenUrl);
-            }
+            restCallUser = new HttpRequestHelper(PublicAppSettings.AuthSrvUrl, "api/user/", PublicAppSettings.AuthSrvTokenUrl);
         }
 
         public async Task<IActionResult> MyImages()
@@ -122,8 +120,8 @@ namespace WebSitePublic.Controllers
         {
             await AddStatAction(new AddActionMsg() { UserId = token.UserId, Action = ActionsEnum.LOGOUT, Client = "website", UserInfo=token.Email });
 
-            await HttpContext.SignOutAsync("Cookies");
-            await HttpContext.SignOutAsync("oidc");
+            await AuthenticationHttpContextExtensions.SignOutAsync(HttpContext, "oidc");
+            await AuthenticationHttpContextExtensions.SignOutAsync(HttpContext, CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Index");
         }
@@ -254,6 +252,15 @@ namespace WebSitePublic.Controllers
             model.AvgRate = res.AvgRate;
 
             return model;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Stat()
+        {
+            List<GetActionStatMsg> res = await restCallStat.CallRequest<List<GetActionStatMsg>>("getallstat", new StringContent(""),null,false);
+
+            return View(res);
         }
     }
 }

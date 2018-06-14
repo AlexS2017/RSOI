@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using WebSitePublic.Common;
 
 namespace WebSitePublic
@@ -56,11 +58,18 @@ namespace WebSitePublic
 
                 options.Scope.Clear();
                 options.Scope.Add("openid");
-                //options.Scope.Add("email");
-                //options.Scope.Add("roles");
-                //options.Scope.Add("profile");
+                options.Scope.Add("roles");
+                options.Scope.Add("profile");
                 options.Scope.Add("api_img");
                 options.Scope.Add("offline_access");
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = JwtClaimTypes.Name,
+                    RoleClaimType = JwtClaimTypes.Role,
+                };
+
+                options.ClaimActions.Clear();
             });
 
         }

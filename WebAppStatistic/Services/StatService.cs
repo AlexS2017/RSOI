@@ -39,7 +39,8 @@ namespace WebAppStatistic.Services
         internal async Task<List<GetActionStatMsg>> GetAllStat()
         {
             List<GetActionStatMsg> statlist = await _db.UserActions.OrderByDescending(a => a.DateCreated).Take(100).
-                Select(a => new GetActionStatMsg() { Action = a.Action, DateCreated = a.DateCreated, EntityId = a.EntityId, UserId = a.UserProfileId, UserInfo = a.UserInfo}).
+                Select(a => new GetActionStatMsg()
+                { Action = a.Action, DateCreated = a.DateCreated, EntityId = a.EntityId, UserId = a.UserProfileId, UserInfo = a.UserInfo, Client = a.Client}).
                 ToListAsync();
             return statlist;
         }

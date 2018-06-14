@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Common.CommonCode;
 using Common.ServiceMessages;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
+using IdentitySrv.Common;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -31,6 +33,7 @@ namespace WebAppIdentity.Controllers
         private readonly ILogger _logger;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly UserProfileSrvcs _upsrv;
+        StatSrvHelper statSrvHelp;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -46,6 +49,9 @@ namespace WebAppIdentity.Controllers
             _logger = logger;
             _interaction = interaction;
             _upsrv = upsrv;
+
+            HttpRequestHelper restCallStat = new HttpRequestHelper(AuthAppSettings.StatSrvUrl, "api/Stat/", AuthAppSettings.AuthSrvTokenUrl);
+            statSrvHelp = new StatSrvHelper(restCallStat);
         }
 
         [TempData]
@@ -253,6 +259,8 @@ namespace WebAppIdentity.Controllers
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
+
+                    await statSrvHelp.AddStatAction(new AddActionMsg() { UserId = req.Id, Action = ActionsEnum.REGISTER, Client = "website", UserInfo = model.Email });
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);

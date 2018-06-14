@@ -55,6 +55,9 @@ namespace WebAppAuth
                     // no interactive user, use the clientid/secret for authentication
                     AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
                     RequireConsent = false,
+                    AlwaysSendClientClaims=true,
+                    AlwaysIncludeUserClaimsInIdToken=true,
+                    AllowAccessTokensViaBrowser=true,
 
                     // secret for authentication
                     ClientSecrets =
@@ -69,6 +72,7 @@ namespace WebAppAuth
                     {
                         StandardScopes.OpenId,
                         StandardScopes.Profile,
+                        "roles",
                         "api_img"
                     },
                     AllowOfflineAccess = true
@@ -80,12 +84,11 @@ namespace WebAppAuth
         {
             return new List<ApiResource>
             {
-                new ApiResource("api_img", "My API"),
+                new ApiResource("api_img1", "My API",new []{ "role","name","offline_access" }),
                 new ApiResource("api_img_internal", "My internal API")
                 {
                     ApiSecrets = {new Secret("secret123".Sha256()) },
-                    Scopes = {new Scope(){ Name= "api_img_internal"} },
-                   // UserClaims = { "role", "user", }
+                    Scopes = {new Scope(){ Name= "api_img_internal"} }
                 }
             };
         }
@@ -98,8 +101,13 @@ namespace WebAppAuth
                 new IdentityResources.Profile(),
                 new IdentityResource
                 {
-                    Name = "api_imgid",
-                    UserClaims = new List<string>(){ "api_imgid" }
+                    Name = "api_img",
+                    UserClaims = new List<string>(){ "api_img" }
+                },
+                new IdentityResource
+                {
+                    Name="roles",
+                    UserClaims=new List<string>{ "role" }
                 }
             };
         }

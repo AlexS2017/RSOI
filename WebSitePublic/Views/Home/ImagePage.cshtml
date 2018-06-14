@@ -14,7 +14,7 @@
     </div>
     <div class="row">
 
-        <div class="col-md-5">
+        <div class="col-md-6">
 
             <img width="450" src="/Home/ViewImage/@Model.ImageId" />
 
@@ -23,11 +23,11 @@
             <textarea asp-for="AllCommentsInfo" rows="12" class="form-control" readonly="readonly" style="background-color:whitesmoke;"></textarea>
             <br />
         </div>
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
     </div>
     <br />
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-6">
             Avg rating: @Model.AvgRate
         </div>
         <div class="col-md-5">
@@ -46,7 +46,7 @@
             </select>
             <br /><input show-if="User.Identity.IsAuthenticated" type="submit" value="Add comment" class="btn btn-default" />
         </div>
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
     </div>
 </form>
 

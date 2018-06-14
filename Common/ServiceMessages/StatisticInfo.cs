@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Common.ServiceMessages
 {
-    public class GetActionStatMsg
+    public class GetStatisticInfo
     {
         public DateTime DateCreated { get; set; }
 
-        public Guid UserId { get; set; }
+        public Guid UserProfileId { get; set; }
 
         public string UserInfo { get; set; }
 
@@ -16,6 +16,6 @@ namespace Common.ServiceMessages
 
         public Guid? EntityId { get; set; }
 
-        public string Client { get; set; }
+        public string Client { get; set; } 
     }
 }

@@ -2,6 +2,7 @@
 using Common.ServiceMessages;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
@@ -17,7 +18,6 @@ namespace WebAppIdentity.Controllers
     public class BaseController : Controller
     {
         public TokenInfo token;
-        public HttpRequestHelper restCallUser;
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -38,23 +38,21 @@ namespace WebAppIdentity.Controllers
                         sub = sub
                     };
 
-                    restCallUser = new HttpRequestHelper(PublicAppSettings.AuthSrvUrl, "api/user/", PublicAppSettings.AuthSrvTokenUrl);
-                    try
+                    Claim cn = User.Claims.FirstOrDefault(p => p.Type == "name");
+                    if(cn != null)
                     {
-                        GetUserProfileMsg res = restCallUser.CallRequest<GetUserProfileMsg>("getuserbyid", new StringContent(""), null, false, sub).Result;
-                        token.Email = res.Email;
+                        token.Email = cn.Value;
                     }
-                    catch (Exception)
+                    else
                     {
                         token.Email = "error receiving email";
-                    }
-                    //token.Email = "";
+                    }                   
                 }
             }
             catch(Exception ex)
             {
-                context.HttpContext.SignOutAsync("Cookies");
-                context.HttpContext.SignOutAsync("oidc");               
+                AuthenticationHttpContextExtensions.SignOutAsync(HttpContext, "oidc").Wait();
+                AuthenticationHttpContextExtensions.SignOutAsync(HttpContext, CookieAuthenticationDefaults.AuthenticationScheme).Wait();
                 return;
             }
 

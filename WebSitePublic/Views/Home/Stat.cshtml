@@ -1,7 +1,58 @@
-﻿
+﻿@model IEnumerable<Common.ServiceMessages.GetActionStatMsg>
 @{
     ViewData["Title"] = "Stat";
 }
 
 <h2>Statistic</h2>
 
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Дата
+                    </th>
+                    <th>
+                        Пользователь
+                    </th>
+                    <th>
+                        Действие
+                    </th>
+                    <th>
+                        ID Объекта
+                    </th>
+                    <th>
+                        Приложение
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateCreated)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserInfo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Action)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EntityId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Client)
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>

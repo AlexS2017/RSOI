@@ -14,5 +14,6 @@ namespace Common.ServiceMessages
         public readonly static string AUTH_SRV_UP = "auth_service_ok";
         public readonly static string IMG_SRV_FAIL = "img_service_fail";
         public readonly static string IMG_SRV_UP = "img_service_ok";
+        public readonly static string REGISTER = "register";
     }
 }

@@ -18,6 +18,7 @@ using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using IdentityModel;
 using System.IdentityModel.Tokens.Jwt;
+using IdentitySrv.Common;
 
 namespace WebAppIdentity
 {
@@ -35,8 +36,10 @@ namespace WebAppIdentity
         {
             string authConnString = Configuration.GetConnectionString("IdentityConn");
 
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer());
+            AuthAppSettings.ImgSrvUrl = Configuration["ImgService:url"];
+            AuthAppSettings.AuthSrvUrl = Configuration["Auth:Url"];
+            AuthAppSettings.StatSrvUrl = Configuration["StatService:url"];
+
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(authConnString));
 
@@ -67,47 +70,16 @@ namespace WebAppIdentity
                 .AddAspNetIdentity<ApplicationUser>();
             //.AddOperationalStore(build => build.UseNpgsql(authConnString));
 
-            string authorityUrl = Configuration["Auth:Url"];
-
-            services.AddAuthentication()
-            //    AddScheme("internalsrv", options =>
-            //    {
-            //        options.Authority = authorityUrl;
-            //        options.RequireHttpsMetadata = false;
-            //        options.ap
-            //    }
-            //)
+            services.AddAuthentication()         
             .AddGoogle("Google", options =>
             {
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                //options.
                 options.ClientId = "434483408261-55tc8n0cs4ff1fe21ea8df2o443v2iuc.apps.googleusercontent.com";
                 options.ClientSecret = "3gcoTrEDPPJ0ukn_aYYT6PWo";
             });
 
 
-            //services.AddAuthorization(options => 
-            //{
-            //    options.AddPolicy("InternalServerAuthorization",
-            //        policy =>
-            //        {
-            //            policy.AuthenticationSchemes.Add("internalsrv");
-            //            policy.RequireAuthenticatedUser();
-            //        }); 
-            // });
-
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer(options =>
-            //    {
-            //        options.Authority = authorityUrl;
-            //        options.RequireHttpsMetadata = false;
-            //        options.Audience = authorityUrl + "resources";
-            //        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-            //        {
-            //            RoleClaimType = JwtClaimTypes.Role,
-            //            NameClaimType = JwtClaimTypes.Name
-            //        };
-            //    });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -126,13 +98,7 @@ namespace WebAppIdentity
 
             app.UseStaticFiles();
 
-            
-            //app.UseIdentity();
             app.UseIdentityServer();
-
-            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            //app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
