@@ -26,6 +26,7 @@ namespace WebSitePublic
         // This method gets called by the runtime. Use this method to add services to the container. //
         public void ConfigureServices(IServiceCollection services)
         {
+            //читаем настройки из appsettings.json
             PublicAppSettings.ImgSrvUrl = Configuration["ImgService:url"];
             PublicAppSettings.AuthSrvUrl = Configuration["Auth:Url"];
             PublicAppSettings.StatSrvUrl = Configuration["StatService:url"];
@@ -34,6 +35,7 @@ namespace WebSitePublic
 
             //services.AddIdentity<>()
 
+            //настраиваем аутентификацию
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(options =>
@@ -90,7 +92,6 @@ namespace WebSitePublic
             app.UseAuthentication();
             app.UseStaticFiles();
 
-            //app.UseSession(); //
 
             //app.UseMvc(routes =>
             //{
